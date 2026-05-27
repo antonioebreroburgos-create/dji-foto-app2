@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>DJI Catalog · Fotos</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c26;
+    --border: #2a2a3a;
+    --accent: #00c8ff;
+    --accent2: #ff4d6d;
+    --text: #e8e8f0;
+    --text-dim: #6b6b85;
+    --green: #00ff9d;
+    --yellow: #ffd60a;
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--accent);
+  }
+
+  .progress-info {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: right;
+    line-height: 1.4;
+  }
+
+  .progress-info span {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar-wrap {
+    height: 3px;
+    background: var(--border);
+    position: sticky;
+    top: 57px;
+    z-index: 99;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--green));
+    transition: width 0.4s ease;
+  }
+
+  /* ── MAIN ── */
+  main {
+    flex: 1;
+    padding: 20px 16px 100px;
+    max-width: 480px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* ── SETUP SCREEN ── */
+  #setup-screen {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .setup-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 2px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .setup-sub {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  label {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  input, select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    padding: 12px 14px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus, select:focus {
+    border-color: var(--accent);
+  }
+
+  input::placeholder {
+    color: var(--text-dim);
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 16px;
+    width: 100%;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s, transform 0.1s;
+    margin-top: 8px;
+  }
+
+  .btn-primary:active { transform: scale(0.98); opacity: 0.85; }
+
+  .info-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .info-box strong { color: var(--text); }
+
+  /* ── APP SCREEN ── */
+  #app-screen { display: none; flex-direction: column; gap: 16px; }
+
+  /* Article card */
+  .article-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .article-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+
+  .article-index {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .article-code {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .article-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  /* Photo status */
+  .photo-status {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .photo-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+    flex: 1;
+    transition: all 0.3s;
+  }
+
+  .photo-indicator.done {
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .photo-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    flex-shrink: 0;
+    transition: background 0.3s;
+  }
+
+  .photo-indicator.done .photo-dot { background: var(--green); }
+
+  /* Photo buttons */
+  .photo-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-photo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+  }
+
+  .btn-photo:active { transform: scale(0.98); }
+
+  .btn-photo.ready {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn-photo.done {
+    border-color: var(--green);
+    color: var(--green);
+    background: rgba(0,255,157,0.05);
+  }
+
+  .btn-photo-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-photo-icon {
+    font-size: 22px;
+  }
+
+  .btn-photo-label { line-height: 1.2; }
+  .btn-photo-sub {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    opacity: 0.6;
+    display: block;
+  }
+
+  .btn-photo-arrow { opacity: 0.4; font-size: 18px; }
+
+  /* Navigation */
+  .nav-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-nav {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .btn-nav:active { transform: scale(0.97); }
+  .btn-nav:disabled { opacity: 0.3; cursor: default; }
+
+  .btn-nav.next { border-color: var(--accent); color: var(--accent); }
+
+  /* Upload section */
+  .upload-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+  }
+
+  .upload-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+
+  .upload-stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .stat-item {
+    flex: 1;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    display: block;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .stat-item.photos .stat-num { color: var(--accent); }
+  .stat-item.articles .stat-num { color: var(--yellow); }
+
+  .btn-upload {
+    background: linear-gradient(135deg, var(--accent2), #ff6b35);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 16px;
+    width: 100%;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-upload:active { transform: scale(0.98); opacity: 0.85; }
+  .btn-upload:disabled { opacity: 0.5; cursor: default; }
+
+  /* Hidden input */
+  #camera-input { display: none; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 200;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .toast.success { border-color: var(--green); color: var(--green); }
+  .toast.error { border-color: var(--accent2); color: var(--accent2); }
+
+  /* Loading overlay */
+  #loading-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,10,15,0.9);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  #loading-overlay.show { display: flex; }
+
+  .spinner {
+    width: 40px; height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  /* Upload progress */
+  .upload-progress {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .upload-progress.show { display: flex; }
+
+  .upload-progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .upload-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--yellow));
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  .upload-progress-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: center;
+  }
+
+  /* Mode toggle */
+  .mode-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+  }
+
+  .mode-toggle label {
+    font-size: 13px;
+    color: var(--text-dim);
+    text-transform: none;
+    letter-spacing: 0;
+    font-family: 'DM Sans', sans-serif;
+    flex: 1;
+    cursor: pointer;
+  }
+
+  .toggle-switch {
+    width: 44px; height: 24px;
+    background: var(--border);
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+
+  .toggle-switch.on { background: var(--accent); }
+
+  .toggle-knob {
+    width: 18px; height: 18px;
+    background: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 3px; left: 3px;
+    transition: transform 0.2s;
+  }
+
+  .toggle-switch.on .toggle-knob { transform: translateX(20px); }
+
+  /* Completed all badge */
+  .all-done-badge {
+    display: none;
+    background: rgba(0,255,157,0.1);
+    border: 1px solid var(--green);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    text-align: center;
+    color: var(--green);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .all-done-badge.show { display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">DJI·FOTO</div>
+  <div class="progress-info" id="header-progress" style="display:none">
+    <span id="progress-current">1</span> / <span id="progress-total">—</span><br>
+    <span id="photos-taken-count">0</span> fotos capturadas
+  </div>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+</div>
+
+<main>
+
+  <!-- ══ SETUP SCREEN ══ -->
+  <div id="setup-screen">
+    <div>
+      <div class="setup-title">CONFIGURAR</div>
+      <div class="setup-sub">Conecta tu hoja de Google Sheets para empezar</div>
+    </div>
+
+    <div class="info-box">
+      <strong>Antes de continuar:</strong> abre el Sheets, ve a
+      <strong>Archivo → Compartir → Publicar en la web</strong>,
+      selecciona la hoja y publica como CSV. Pega aquí el ID de tu hoja.
+    </div>
+
+    <div class="field-group">
+      <label>URL CSV publicado (Google Sheets)</label>
+      <input type="text" id="sheets-id" placeholder="1CMnh9JMX60DYsErd_EqhT_4na9N3parEIQVn3cctrQ8"
+             value="1CMnh9JMX60DYsErd_EqhT_4na9N3parEIQVn3cctrQ8">
+    </div>
+
+    <div class="field-group">
+      <label>Columna Referencia (código)</label>
+      <input type="text" id="col-ref" placeholder="referencia" value="referencia">
+    </div>
+
+    <div class="field-group">
+      <label>Columna Nombre</label>
+      <input type="text" id="col-name" placeholder="nombre" value="nombre">
+    </div>
+
+    <div class="field-group">
+      <label>Columna Selección (solo TRUE)</label>
+      <input type="text" id="col-sel" placeholder="✓" value="✓">
+      <div style="font-size:12px; color:var(--text-dim); margin-top:4px; font-family:'DM Mono',monospace;">
+        Solo se cargarán los artículos con valor TRUE en esta columna
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>ID Carpeta Google Drive (destino)</label>
+      <input type="text" id="drive-folder-id" placeholder="1yzUuy7f4ltuZU7-N-9398l-A58uN4NlB"
+             value="1yzUuy7f4ltuZU7-N-9398l-A58uN4NlB">
+    </div>
+
+    <button class="btn-primary" onclick="loadArticles()">
+      ↓ Cargar artículos
+    </button>
+  </div>
+
+  <!-- ══ APP SCREEN ══ -->
+  <div id="app-screen">
+
+    <!-- Article card -->
+    <div class="article-card">
+      <div class="article-index" id="article-index">Artículo 1 de 1</div>
+      <div class="article-code" id="article-code">—</div>
+      <div class="article-name" id="article-name">—</div>
+
+      <div class="photo-status">
+        <div class="photo-indicator" id="indicator-1">
+          <div class="photo-dot"></div>
+          <span>FOTO 1</span>
+        </div>
+        <div class="photo-indicator" id="indicator-2">
+          <div class="photo-dot"></div>
+          <span>FOTO 2</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mode toggle -->
+    <div class="mode-toggle" id="mode-toggle-wrap">
+      <label for="single-mode-toggle">Solo 1 foto para este artículo</label>
+      <div class="toggle-switch" id="single-mode-toggle" onclick="toggleSingleMode()">
+        <div class="toggle-knob"></div>
+      </div>
+    </div>
+
+    <!-- Photo buttons -->
+    <div class="photo-buttons">
+      <button class="btn-photo ready" id="btn-foto1" onclick="capturePhoto(1)">
+        <div class="btn-photo-left">
+          <span class="btn-photo-icon">📷</span>
+          <div class="btn-photo-label">
+            Foto 1
+            <span class="btn-photo-sub" id="filename-1">—</span>
+          </div>
+        </div>
+        <span class="btn-photo-arrow">›</span>
+      </button>
+
+      <button class="btn-photo" id="btn-foto2" onclick="capturePhoto(2)">
+        <div class="btn-photo-left">
+          <span class="btn-photo-icon">📷</span>
+          <div class="btn-photo-label">
+            Foto 2
+            <span class="btn-photo-sub" id="filename-2">—</span>
+          </div>
+        </div>
+        <span class="btn-photo-arrow">›</span>
+      </button>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-buttons">
+      <button class="btn-nav" id="btn-prev" onclick="navigate(-1)">
+        ‹ Anterior
+      </button>
+      <button class="btn-nav next" id="btn-next" onclick="navigate(1)">
+        Siguiente ›
+      </button>
+    </div>
+
+    <!-- All done -->
+    <div class="all-done-badge" id="all-done-badge">
+      ✓ Todos los artículos fotografiados
+    </div>
+
+    <!-- Upload section -->
+    <div class="upload-section">
+      <div class="upload-title">Subida a Google Drive</div>
+      <div class="upload-stats">
+        <div class="stat-item photos">
+          <span class="stat-num" id="total-photos-num">0</span>
+          <div class="stat-label">fotos listas</div>
+        </div>
+        <div class="stat-item articles">
+          <span class="stat-num" id="total-articles-done">0</span>
+          <div class="stat-label">artículos completos</div>
+        </div>
+      </div>
+
+      <div class="upload-progress" id="upload-progress-wrap">
+        <div class="upload-progress-bar">
+          <div class="upload-progress-fill" id="upload-progress-fill"></div>
+        </div>
+        <div class="upload-progress-text" id="upload-progress-text">Subiendo…</div>
+      </div>
+
+      <button class="btn-upload" id="btn-upload" onclick="uploadAllPhotos()">
+        ↑ Subir todas las fotos a Drive
+      </button>
+
+      <div style="margin-top: 10px; text-align:center; font-size:11px; color: var(--text-dim); font-family: 'DM Mono', monospace;">
+        Carpeta: 01_Subida_Fotos
+      </div>
+    </div>
+
+  </div><!-- end #app-screen -->
+
+</main>
+
+<!-- Hidden camera input -->
+<input type="file" id="camera-input" accept="image/*" capture="environment">
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Loading overlay -->
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Cargando artículos…</div>
+</div>
+
+<script>
+// ══ STATE ══
+const state = {
+  articles: [],
+  current: 0,
+  photos: {},        // { "CODIGO_1": File, "CODIGO_2": File, ... }
+  singleMode: {},    // { index: true/false }
+  pendingPhotoSlot: null,
+  sheetsId: '',
+  driveFolderId: '',
+  colRef: 'referencia',
+  colName: 'nombre',
+  colSel: '✓',
+};
+
+// ══ LOAD ARTICLES ══
+async function loadArticles() {
+  const csvUrl   = document.getElementById('sheets-id').value.trim();
+  const colRef   = document.getElementById('col-ref').value.trim().toLowerCase();
+  const colName  = document.getElementById('col-name').value.trim().toLowerCase();
+  const folderId = document.getElementById('drive-folder-id').value.trim();
+
+  if (!csvUrl || !folderId) { showToast('Rellena todos los campos', 'error'); return; }
+
+  const colSel = document.getElementById('col-sel').value.trim();
+  state.sheetsId = csvUrl;
+  state.driveFolderId = folderId;
+  state.colRef = colRef;
+  state.colName = colName;
+  state.colSel = colSel;
+
+  showLoading('Cargando artículos…');
+
+  try {
+    const url = csvUrl;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('No se pudo acceder al Sheets');
+    const csv = await res.text();
+
+    const rows = parseCSV(csv);
+    if (rows.length < 2) throw new Error('La hoja parece vacía');
+
+    const headers = rows[0].map(h => h.toLowerCase().trim());
+    const refIdx  = headers.findIndex(h => h === colRef || h.includes(colRef));
+    const nameIdx = headers.findIndex(h => h === colName || h.includes(colName));
+    const selIdx  = colSel ? headers.findIndex(h => h === colSel.toLowerCase() || h.includes(colSel.toLowerCase())) : -1;
+
+    if (refIdx === -1 || nameIdx === -1) {
+      throw new Error(`Columnas "${colRef}" o "${colName}" no encontradas. Cabeceras: ${headers.join(', ')}`);
+    }
+
+    const allRows = rows.slice(1).filter(r => r[refIdx] && r[refIdx].trim());
+
+    // Filter by selection column if found
+    const filtered = (selIdx !== -1)
+      ? allRows.filter(r => (r[selIdx] || '').trim().toUpperCase() === 'TRUE')
+      : allRows;
+
+    state.articles = filtered.map(r => ({ code: r[refIdx].trim(), name: r[nameIdx]?.trim() || '' }));
+
+    if (state.articles.length === 0) {
+      const totalRows = allRows.length;
+      throw new Error(selIdx !== -1
+        ? `Ningún artículo tiene TRUE en la columna "${colSel}" (total en hoja: ${totalRows})`
+        : 'No se encontraron artículos');
+    }
+
+    hideLoading();
+    startApp();
+    const msg = selIdx !== -1
+      ? `${state.articles.length} artículos seleccionados (TRUE) cargados ✓`
+      : `${state.articles.length} artículos cargados ✓`;
+    showToast(msg, 'success');
+
+  } catch (err) {
+    hideLoading();
+    showToast(err.message, 'error');
+  }
+}
+
+function parseCSV(text) {
+  const rows = [];
+  const lines = text.split('\n');
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    const cols = [];
+    let cur = '', inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQuotes = !inQuotes; }
+      else if (c === ',' && !inQuotes) { cols.push(cur); cur = ''; }
+      else { cur += c; }
+    }
+    cols.push(cur);
+    rows.push(cols);
+  }
+  return rows;
+}
+
+// ══ START APP ══
+function startApp() {
+  document.getElementById('setup-screen').style.display = 'none';
+  const app = document.getElementById('app-screen');
+  app.style.display = 'flex';
+  document.getElementById('header-progress').style.display = 'block';
+  document.getElementById('progress-total').textContent = state.articles.length;
+  renderArticle();
+}
+
+// ══ RENDER ARTICLE ══
+function renderArticle() {
+  const i = state.current;
+  const art = state.articles[i];
+
+  document.getElementById('article-index').textContent = `Artículo ${i+1} de ${state.articles.length}`;
+  document.getElementById('article-code').textContent = art.code;
+  document.getElementById('article-name').textContent = art.name;
+  document.getElementById('progress-current').textContent = i + 1;
+
+  const k1 = `${art.code}_1`;
+  const k2 = `${art.code}_2`;
+  const has1 = !!state.photos[k1];
+  const has2 = !!state.photos[k2];
+  const singleMode = !!state.singleMode[i];
+
+  // Filenames
+  document.getElementById('filename-1').textContent = `${k1}.jpg`;
+  document.getElementById('filename-2').textContent = `${k2}.jpg`;
+
+  // Button states
+  const btn1 = document.getElementById('btn-foto1');
+  const btn2 = document.getElementById('btn-foto2');
+
+  btn1.className = 'btn-photo ' + (has1 ? 'done' : 'ready');
+  btn1.querySelector('.btn-photo-icon').textContent = has1 ? '✓' : '📷';
+
+  btn2.className = 'btn-photo ' + (singleMode ? '' : (has2 ? 'done' : 'ready'));
+  btn2.querySelector('.btn-photo-icon').textContent = has2 ? '✓' : '📷';
+  btn2.disabled = singleMode;
+  btn2.style.opacity = singleMode ? '0.35' : '1';
+
+  // Indicators
+  document.getElementById('indicator-1').className = 'photo-indicator' + (has1 ? ' done' : '');
+  document.getElementById('indicator-2').className = 'photo-indicator' + ((has2 && !singleMode) ? ' done' : '');
+
+  // Toggle
+  const toggle = document.getElementById('single-mode-toggle');
+  toggle.className = 'toggle-switch' + (singleMode ? ' on' : '');
+
+  // Nav buttons
+  document.getElementById('btn-prev').disabled = i === 0;
+  document.getElementById('btn-next').disabled = i === state.articles.length - 1;
+
+  // Progress bar
+  const done = state.articles.filter((a, idx) => {
+    const sm = state.singleMode[idx];
+    return state.photos[`${a.code}_1`] && (sm || state.photos[`${a.code}_2`]);
+  }).length;
+  document.getElementById('progress-bar').style.width = `${(done / state.articles.length) * 100}%`;
+
+  // Stats
+  const totalPhotos = Object.keys(state.photos).length;
+  document.getElementById('total-photos-num').textContent = totalPhotos;
+  document.getElementById('total-articles-done').textContent = done;
+  document.getElementById('photos-taken-count').textContent = totalPhotos;
+
+  // All done badge
+  const allDone = done === state.articles.length;
+  document.getElementById('all-done-badge').className = 'all-done-badge' + (allDone ? ' show' : '');
+}
+
+// ══ CAPTURE PHOTO ══
+function capturePhoto(slot) {
+  state.pendingPhotoSlot = slot;
+  const input = document.getElementById('camera-input');
+  input.value = '';
+  input.click();
+}
+
+document.getElementById('camera-input').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const art = state.articles[state.current];
+  const key = `${art.code}_${state.pendingPhotoSlot}`;
+
+  // Store as renamed file
+  const renamed = new File([file], `${key}.jpg`, { type: 'image/jpeg' });
+  state.photos[key] = renamed;
+
+  showToast(`${key}.jpg guardada ✓`, 'success');
+  renderArticle();
+});
+
+// ══ SINGLE MODE ══
+function toggleSingleMode() {
+  const i = state.current;
+  state.singleMode[i] = !state.singleMode[i];
+  // Remove photo 2 if switching to single
+  if (state.singleMode[i]) {
+    delete state.photos[`${state.articles[i].code}_2`];
+  }
+  renderArticle();
+}
+
+// ══ NAVIGATE ══
+function navigate(dir) {
+  const next = state.current + dir;
+  if (next < 0 || next >= state.articles.length) return;
+  state.current = next;
+  renderArticle();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ══ UPLOAD TO DRIVE ══
+async function uploadAllPhotos() {
+  const photos = Object.entries(state.photos);
+  if (photos.length === 0) { showToast('No hay fotos para subir', 'error'); return; }
+
+  // Try to get OAuth token via Google Identity Services
+  if (!window.google || !window.google.accounts) {
+    showToast('Cargando Google Auth…', '');
+    await loadGoogleAuth();
+  }
+
+  try {
+    const token = await getAccessToken();
+    await uploadWithToken(token, photos);
+  } catch (err) {
+    showToast('Error de autenticación: ' + err.message, 'error');
+  }
+}
+
+function loadGoogleAuth() {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.onload = resolve;
+    script.onerror = () => reject(new Error('No se pudo cargar Google Auth'));
+    document.head.appendChild(script);
+  });
+}
+
+let tokenClient = null;
+let accessTokenResolve = null;
+
+function getAccessToken() {
+  return new Promise((resolve, reject) => {
+    if (!tokenClient) {
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: '25663159623-auto.apps.googleusercontent.com',
+        scope: 'https://www.googleapis.com/auth/drive.file',
+        callback: (response) => {
+          if (response.error) { reject(new Error(response.error)); return; }
+          resolve(response.access_token);
+        },
+      });
+    }
+    tokenClient.requestAccessToken({ prompt: '' });
+  });
+}
+
+async function uploadWithToken(token, photos) {
+  const btn = document.getElementById('btn-upload');
+  btn.disabled = true;
+
+  const progressWrap = document.getElementById('upload-progress-wrap');
+  const progressFill = document.getElementById('upload-progress-fill');
+  const progressText = document.getElementById('upload-progress-text');
+  progressWrap.className = 'upload-progress show';
+
+  let uploaded = 0;
+  const errors = [];
+
+  for (const [key, file] of photos) {
+    progressText.textContent = `Subiendo ${key}.jpg… (${uploaded+1}/${photos.length})`;
+    progressFill.style.width = `${(uploaded / photos.length) * 100}%`;
+
+    try {
+      await uploadFileToDrive(token, file, state.driveFolderId);
+      uploaded++;
+    } catch (err) {
+      errors.push(key);
+    }
+  }
+
+  progressFill.style.width = '100%';
+  btn.disabled = false;
+
+  if (errors.length === 0) {
+    progressText.textContent = `✓ ${uploaded} fotos subidas correctamente`;
+    showToast(`${uploaded} fotos subidas a Drive ✓`, 'success');
+  } else {
+    progressText.textContent = `${uploaded} subidas · ${errors.length} errores`;
+    showToast(`${errors.length} errores al subir`, 'error');
+  }
+}
+
+async function uploadFileToDrive(token, file, folderId) {
+  const metadata = {
+    name: file.name,
+    parents: [folderId],
+  };
+
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+  form.append('file', file);
+
+  const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: form,
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error?.message || 'Upload failed');
+  }
+  return res.json();
+}
+
+// ══ UI HELPERS ══
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => { t.className = 'toast'; }, 3000);
+}
+
+function showLoading(msg) {
+  document.getElementById('loading-text').textContent = msg;
+  document.getElementById('loading-overlay').className = 'show';
+  // also style as flex
+  document.getElementById('loading-overlay').style.display = 'flex';
+}
+
+function hideLoading() {
+  document.getElementById('loading-overlay').style.display = 'none';
+  document.getElementById('loading-overlay').className = '';
+}
+</script>
+
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+</body>
+</html>
