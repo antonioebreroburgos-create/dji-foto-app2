@@ -777,10 +777,23 @@ async function loadArticles() {
   showLoading('Cargando artículos…');
 
   try {
-    const url = csvUrl;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('No se pudo acceder al Sheets');
-    const csv = await res.text();
+    // Fetch CSV - try direct, fallback to CORS proxy
+    let csvText;
+    try {
+      const res1 = await fetch(csvUrl);
+      if (!res1.ok) throw new Error('direct failed');
+      csvText = await res1.text();
+    } catch(e) {
+      try {
+        const proxy = 'https://corsproxy.io/?url=' + encodeURIComponent(csvUrl);
+        const res2 = await fetch(proxy);
+        if (!res2.ok) throw new Error('proxy failed');
+        csvText = await res2.text();
+      } catch(e2) {
+        throw new Error('No se pudo acceder al Sheets. Comprueba que está publicado como CSV.');
+      }
+    }
+    const csv = csvText;
 
     const rows = parseCSV(csv);
     if (rows.length < 2) throw new Error('La hoja parece vacía');
