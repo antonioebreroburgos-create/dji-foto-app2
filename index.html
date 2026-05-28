@@ -596,7 +596,7 @@
     <div class="field-group">
       <label>URL CSV publicado (Google Sheets)</label>
       <input type="text" id="sheets-id" placeholder="1CMnh9JMX60DYsErd_EqhT_4na9N3parEIQVn3cctrQ8"
-             value="1CMnh9JMX60DYsErd_EqhT_4na9N3parEIQVn3cctrQ8">
+             value="https://docs.google.com/spreadsheets/d/e/2PACX-1vRUbdD5xYspN2Q-bHZfeK9WZ5SnsV-OPw9xLRQTR0hjkCXdS2wyaVbtAIXhiMKOEbAyaSTtWMGsYMBz/pub?output=csv">
     </div>
 
     <div class="field-group">
@@ -760,7 +760,11 @@ const state = {
 
 // ══ LOAD ARTICLES ══
 async function loadArticles() {
-  const csvUrl   = document.getElementById('sheets-id').value.trim();
+  const csvUrlRaw = document.getElementById('sheets-id').value.trim();
+  // Ensure it's a full URL, not just an ID
+  const csvUrl = csvUrlRaw.startsWith('http') 
+    ? csvUrlRaw 
+    : `https://docs.google.com/spreadsheets/d/e/2PACX-1vRUbdD5xYspN2Q-bHZfeK9WZ5SnsV-OPw9xLRQTR0hjkCXdS2wyaVbtAIXhiMKOEbAyaSTtWMGsYMBz/pub?output=csv`;
   const colRef   = document.getElementById('col-ref').value.trim().toLowerCase();
   const colName  = document.getElementById('col-name').value.trim().toLowerCase();
   const folderId = document.getElementById('drive-folder-id').value.trim();
