@@ -946,13 +946,43 @@ document.getElementById('camera-input').addEventListener('change', function(e) {
   const art = state.articles[state.current];
   const key = `${art.code}_${state.pendingPhotoSlot}`;
 
-  // Store as renamed file
-  const renamed = new File([file], `${key}.jpg`, { type: 'image/jpeg' });
-  state.photos[key] = renamed;
-
-  showToast(`${key}.jpg guardada ✓`, 'success');
-  renderArticle();
+  showToast('Procesando foto…', '');
+  compressImage(file, 1200, 0.82).then(blob => {
+    const compressed = new File([blob], `${key}.jpg`, { type: 'image/jpeg' });
+    state.photos[key] = compressed;
+    const kb = Math.round(compressed.size / 1024);
+    showToast(`${key}.jpg guardada · ${kb} KB ✓`, 'success');
+    renderArticle();
+  });
 });
+
+// ══ COMPRESS IMAGE ══
+function compressImage(file, maxWidth, quality) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let w = img.width;
+      let h = img.height;
+
+      // Scale down if wider than maxWidth
+      if (w > maxWidth) {
+        h = Math.round(h * maxWidth / w);
+        w = maxWidth;
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+
+      canvas.toBlob(blob => resolve(blob), 'image/jpeg', quality);
+    };
+    img.src = url;
+  });
+}
 
 // ══ SINGLE MODE ══
 function toggleSingleMode() {
